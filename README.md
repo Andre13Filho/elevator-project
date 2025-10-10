@@ -1,88 +1,178 @@
 # Sistema de Controle de Elevador
 
-> [cite_start]Atividade em Grupo para a disciplina de Programação Orientada a Objetos (POO) da Uniube. [cite: 1, 2] > [cite_start]**Valor:** 2,00 pontos [cite: 2, 69] > [cite_start]**Data de Entrega:** 22/10/2025 [cite: 2, 69]
+Projeto acadêmico (POO) que simula o comportamento de um ou mais elevadores em um prédio.
 
----
+## ✨ Objetivo
 
-## 📝 Descrição Geral
+Criar uma aplicação em Java que modele elevadores, suas regras de operação (capacidade, movimentação, manutenção) e que permita executar uma simulação através de um `main` que exiba o estado dos elevadores após cada operação.
 
-[cite_start]Este projeto consiste na implementação de um sistema de controle de elevadores em Java, utilizando os conceitos de Programação Orientada a Objetos. [cite: 5] [cite_start]O objetivo é simular o comportamento de um ou mais elevadores dentro de um prédio, gerenciando regras como limite de pessoas, movimentação entre andares e modo de manutenção. [cite: 6]
+## 🗂 Estrutura do repositório
 
----
+Arquivos principais:
 
-## 🏛️ Estrutura do Sistema
+- `app/main.java` — Classe com o método `main` que executa a simulação.
+- `model/elevator.java` — Modelo da entidade Elevador (atributos e getters/setters).
+- `model/build.java` — (opcional) Arquivo auxiliar (atualmente vazio).
+- `service/elevatorService.java` — Regras de negócio e operações sobre o elevador.
 
-[cite_start]O sistema é modelado em quatro classes principais, cada uma com uma função específica: [cite: 7]
+> Observação: neste repositório alguns arquivos de modelo estão vazios (ou incompletos). Veja a seção "Próximos passos" abaixo para sugestões de implementação.
 
-- [cite_start]**`Elevador`**: Representa uma única unidade de elevador, mantendo seus atributos e ações básicas. [cite: 8, 9]
-- [cite_start]**`Predio`**: Representa o prédio e gerencia a lista de elevadores existentes. [cite: 10]
-- [cite_start]**`ElevadorService`**: Contém as regras de negócio e a lógica de operação do elevador (subir, descer, embarcar pessoas). [cite: 11]
-- [cite_start]**`Main`**: Responsável pela execução do programa, simulação e exibição de resultados para o usuário. [cite: 12]
+## 📌 Responsabilidades das classes
 
-[cite_start]**Importante:** Nenhuma classe de negócio (`Elevador`, `Predio`, `ElevadorService`) deve conter comandos de exibição como `System.out.println`. [cite: 13] [cite_start]Toda a interação com o usuário deve ser centralizada na classe `Main`. [cite: 15]
+- `Elevador` (model): mantém estado (andar atual, total de andares, capacidade, pessoas presentes, emManutencao) e expõe getters/setters.
+- `Predio` (não existe um arquivo explícito atualmente): é responsável por agregar elevadores e oferecer métodos para adicionar/recuperar elevadores.
+- `ElevadorService` (service): implementa lógica como subir/descer, embarcar/desembarcar pessoas e gerar uma string de status.
+- `Main` (`app/main.java`): interação com o usuário / execução da simulação e exibição dos estados com `System.out.println`.
 
----
+## Regras e contrato por classe
 
-## 📋 Requisitos do Sistema
+A seguir estão regras claras (contratos) para cada classe do sistema. Use estas regras como referência de implementação e para testes.
 
-### 1. Classe `Elevador`
+### Elevador (classe `Elevador`)
 
-#### Atributos
+- Atributos obrigatórios:
 
-- [cite_start]`int andarAtual` (inicia em 0, que é o térreo) [cite: 19]
-- [cite_start]`int totalAndares` [cite: 20]
-- [cite_start]`int capacidade` (número máximo de pessoas) [cite: 21]
-- [cite_start]`int pessoasPresentes` [cite: 22]
-- [cite_start]`boolean emManutencao` [cite: 32]
+  - `private int andarAtual` — valor inicial: 0 (térreo).
+  - `private int totalAndares` — número máximo de andares (>= 0).
+  - `private int capacidade` — capacidade máxima de pessoas (>= 1).
+  - `private int pessoasPresentes` — número atual de pessoas (>= 0 e <= capacidade).
+  - `private boolean emManutencao` — `true` quando em manutenção (movimentação e embarque/desembarque proibidos).
 
-#### Métodos Obrigatórios
+- Métodos obrigatórios (assinaturas mínimas):
 
-- [cite_start]`void inicializar(int capacidade, int totalAndares)` [cite: 35]
-- [cite_start]`void entrar()`: Adiciona uma pessoa, se houver espaço e o elevador não estiver em manutenção. [cite: 36]
-- [cite_start]`void sair()`: Remove uma pessoa, se houver alguém dentro e o elevador não estiver em manutenção. [cite: 37]
-- [cite_start]`void subir()`: Sobe um andar, se não estiver no último andar. [cite: 38]
-- [cite_start]`void descer()`: Desce um andar, se não estiver no térreo. [cite: 39]
-- [cite_start]`void colocarEmManutencao()` e `void liberarManutencao()` [cite: 40]
-- [cite_start]Métodos de acesso (getters) para todos os atributos. [cite: 41]
+  - `public void inicializar(int capacidade, int totalAndares)`
+    - Pré-condições: `capacidade > 0`, `totalAndares >= 0`.
+    - Pós-condições: `this.capacidade == capacidade`, `this.totalAndares == totalAndares`, `andarAtual == 0`, `pessoasPresentes == 0`, `emManutencao == false`.
+  - `public void entrar()`
+    - Somente se `!emManutencao` e `pessoasPresentes < capacidade`.
+    - Se não puder entrar, manter estado inalterado.
+  - `public void sair()`
+    - Somente se `!emManutencao` e `pessoasPresentes > 0`.
+    - Se não houver pessoas, manter estado inalterado.
+  - `public void subir()`
+    - Somente se `!emManutencao` e `andarAtual < totalAndares`.
+    - Incrementa `andarAtual` em 1.
+  - `public void descer()`
+    - Somente se `!emManutencao` e `andarAtual > 0`.
+    - Decrementa `andarAtual` em 1.
+  - `public void colocarEmManutencao()`
+    - Coloca `emManutencao = true` (opcional: zera movimentos; não altera `pessoasPresentes`).
+  - `public void liberarManutencao()`
+    - Coloca `emManutencao = false`.
+  - Getters para todos os atributos: `getAndarAtual()`, `getTotalAndares()`, `getCapacidade()`, `getPessoasPresentes()`, `isEmManutencao()`.
 
-### 2. Classe `Predio`
+- Invariantes / comportamentos esperados:
 
-[cite_start]Representa o prédio que contém um ou mais elevadores. [cite: 43]
+  - `0 <= andarAtual <= totalAndares`.
+  - `0 <= pessoasPresentes <= capacidade`.
+  - Enquanto `emManutencao == true` não é possível alterar `andarAtual` nem `pessoasPresentes`.
 
-#### Atributos
+- Erros/retornos: as versões mínimas usam `void` e não lançam exceções; implementações podem optar por lançar `IllegalStateException` em pré-condições violadas ou retornar `boolean` indicando sucesso/fracasso.
 
-- [cite_start]`String nome` [cite: 45]
-- [cite_start]`List<Elevador> elevadores` [cite: 46]
+- Sugestão de API (mais informativa):
+  - `public boolean entrar()` — retorna `true` se a operação teve sucesso, `false` caso contrário.
+  - `public boolean sair()` — idem.
+  - `public boolean subir()` / `public boolean descer()` — idem.
 
-#### Métodos Obrigatórios
+### Predio (classe `Predio`) — (nome sugerido: `Predio`)
 
-- [cite_start]`void adicionarElevador(Elevador elevador)` [cite: 48]
-- [cite_start]`Elevador getElevador(int indice)` [cite: 49]
-- [cite_start]`int getQuantidadeElevadores()` [cite: 50]
-- [cite_start]`String getNome()` [cite: 51]
+- Atributos obrigatórios:
 
-### 3. Classe `ElevadorService`
+  - `private String nome` — nome do prédio.
+  - `private List<Elevador> elevadores` — lista de elevadores.
 
-[cite_start]Responsável por conter as regras de negócio do sistema. [cite: 54]
+- Métodos obrigatórios:
 
-#### Métodos Obrigatórios
+  - `public Predio(String nome)` — construtor que inicializa `nome` e cria a lista vazia.
+  - `public void adicionarElevador(Elevador elevador)` — adiciona o elevador na lista.
+  - `public Elevador getElevador(int indice)` — retorna o elevador no índice (lança `IndexOutOfBoundsException` se índice inválido).
+  - `public int getQuantidadeElevadores()` — retorna `elevadores.size()`.
+  - `public String getNome()` — getter do nome.
 
-- [cite_start]`void moverElevador(Elevador elevador, int destino)`: Move o elevador andar por andar até o destino. [cite: 56, 57]
-- [cite_start]`void embarcarPessoas(Elevador elevador, int quantidade)`: Adiciona um grupo de pessoas, respeitando a capacidade máxima. [cite: 58]
-- [cite_start]`void desembarcarPessoas(Elevador elevador, int quantidade)`: Remove um grupo de pessoas. [cite: 59]
-- [cite_start]`String gerarStatus(Elevador elevador)`: Retorna uma `String` formatada com o estado atual do elevador. [cite: 60]
+- Regras / comportamentos:
+  - Não aceitar `null` em `adicionarElevador` (lançar `NullPointerException` ou ignorar).
+  - Operações sobre elevadores devem ser realizadas através de `ElevadorService` (recomendado).
 
-### 4. Classe `Main`
+### ElevadorService (classe `ElevadorService`)
 
-[cite_start]Deve conter o método `main` para realizar a simulação. [cite: 62]
+- Responsabilidade: conter a lógica de regras de negócio, deixando o modelo (`Elevador`) apenas como porta de estado.
 
-#### Requisitos da Simulação:
+- Métodos obrigatórios (assinaturas mínimas):
 
-- [cite_start]Crie um objeto `Predio` e adicione dois elevadores com capacidades e andares distintos. [cite: 63]
-- Simule as seguintes operações:
-  - [cite_start]Entrada e saída de pessoas. [cite: 65]
-  - [cite_start]Movimentação entre andares (subida e descida). [cite: 66]
-  - [cite_start]Ativação e desativação do modo de manutenção. [cite: 67]
-- [cite_start]Exiba o status atual dos elevadores após cada operação realizada. [cite: 68]
+  - `public void moverElevador(Elevador elevador, int destino)`
+    - Move o elevador andar-a-andar até `destino` (0 <= destino <= totalAndares).
+    - Deve respeitar `emManutencao` (se `true`, não deve mover).
+    - Implementação mínima: enquanto `andarAtual < destino` chamar `elevador.subir()`, enquanto `andarAtual > destino` chamar `elevador.descer()`.
+  - `public void embarcarPessoas(Elevador elevador, int quantidade)`
+    - Tenta embarcar `quantidade` pessoas, respeitando `capacidade` e `emManutencao`.
+    - Operação deve adicionar no máximo `capacidade - pessoasPresentes`.
+  - `public void desembarcarPessoas(Elevador elevador, int quantidade)`
+    - Remove até `quantidade` pessoas, sem permitir `pessoasPresentes < 0`.
+  - `public String gerarStatus(Elevador elevador)`
+    - Retorna uma String formatada com todas as informações relevantes (andar, pessoas, capacidade, modo de manutenção).
 
----
+- Contrato / pré-condições:
+
+  - `elevador` não pode ser `null` (lançar `NullPointerException`).
+  - `destino` deve estar no intervalo `[0, elevador.getTotalAndares()]`.
+  - `quantidade` deve ser >= 0; valores negativos devem ser ignorados ou lançar `IllegalArgumentException`.
+
+- Comportamentos esperados:
+  - Operações que alteram estado delegam para métodos de `Elevador` para preservar encapsulamento.
+  - `gerarStatus` nunca altera o estado do elevador.
+
+### Main (`app/main.java`) — execução e apresentação
+
+- Responsabilidade: ser a única classe a interagir diretamente com o usuário (entrada/saída).
+- Deveres:
+
+  - Criar e inicializar objetos (`Predio`, `Elevador`, `ElevadorService`).
+  - Executar uma sequência de operações para simular cenários (entrar/sair, subir/descer, manutenção).
+  - Chamar `ElevadorService.gerarStatus(...)` e imprimir o resultado com `System.out.println` após cada operação.
+
+- Regras de apresentação:
+  - Toda saída textual do estado do sistema deve ocorrer em `Main`.
+  - `Main` pode usar `Scanner` para entrada interativa, ou executar um script/simulação pré-definida.
+
+## Requisitos não funcionais e boas práticas
+
+- Separação de responsabilidades (SRP): modelos (`Elevador`, `Predio`) mantêm apenas estado e validação simples; regras de negócio ficam em `ElevadorService`; I/O em `Main`.
+- Testabilidade: `ElevadorService` deve ser testável isoladamente (sem I/O). Prefira métodos com retorno informativo (boolean ou exceção) para facilitar asserts em testes.
+- Robustez: validar parâmetros de entrada e documentar comportamento em casos inválidos.
+
+## 🚀 Como compilar e executar (Windows PowerShell)
+
+2. Crie um diretório de saída (opcional) e compile os arquivos Java (compila apenas os arquivos existentes):
+
+   ```powershell
+   mkdir -Force out; javac -d out app\main.java service\elevatorService.java model\*.java
+   ```
+
+3. Execute a aplicação:
+
+   ```powershell
+   java -cp out main
+   ```
+
+Observações:
+
+- Se as classes estiverem em pacotes, ajuste os caminhos de compilação e o comando `java` para usar o nome qualificado da classe contendo `main`.
+- Se algum arquivo `.java` estiver vazio, o compilador irá ignorá-lo; implemente as classes necessárias antes de executar para ver a simulação completa.
+
+## ✅ Exemplo de saída esperada (simplificada)
+
+Após cada operação o `main` deve imprimir algo como:
+
+- "Elevador 1 — Andar: 2 | Pessoas: 3 | Capacidade: 6 | Status: Operacional"
+- "Elevador 2 — Andar: 0 | Pessoas: 0 | Capacidade: 4 | Status: Em manutenção"
+
+## Próximos passos (sugestões)
+
+1. Implementar a classe `model/elevator.java` com os atributos e métodos descritos acima.
+2. Criar uma classe `model/predio.java` para gerenciar múltiplos elevadores.
+3. Implementar os métodos em `service/elevatorService.java` para realizar as operações e retornar o status formatado.
+4. Preencher `app/main.java` com uma simulação que cria um prédio, adiciona elevadores e aplica operações (entrar/sair, subir/descer, manutenção), imprimindo o status após cada ação.
+
+## Licença
+
+Consulte o arquivo `LICENSE` no repositório.
