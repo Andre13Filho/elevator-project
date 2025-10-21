@@ -23,6 +23,7 @@ public class Elevador {
             return false;
         }
         pessoasPresentes++;
+        System.out.println("Mais uma pessoa entrou no elevador");
         return true;
     }
 
