@@ -24,7 +24,6 @@ public class Elevador {
         }
         pessoasPresentes++;
         System.out.println("Mais uma pessoa entrou no elevador");
-        return true;
     }
 
     public boolean sair() {
@@ -32,14 +31,15 @@ public class Elevador {
             return false;
         }
         pessoasPresentes--;
-        return true;
+        System.out.println("Uma pessoa saiu do elevador");
+        
     }
 
     public boolean subir() {
         if (emManutencao || andarAtual >= totalAndares) {
             return false;
         }
-        andarAtual++;
+        this.andarAtual = andarAtual++;
         return true;
     }
 
@@ -60,22 +60,22 @@ public class Elevador {
     }
 
     public int getAndarAtual() {
-        return andarAtual;
+        return this.andarAtual;
     }
 
     public int getPessoasPresentes() {
-        return pessoasPresentes;
+        return this.pessoasPresentes;
     }
 
     public int getTotalAndares() {
-        return totalAndares;
+        return this.totalAndares;
     }
 
     public int getCapacidade() {
-        return capacidade;
+        return this.capacidade;
     }
 
     public boolean isEmManutencao() {
-        return emManutencao;
+        return this.emManutencao;
     }
 }
