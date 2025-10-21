@@ -26,37 +26,32 @@ public class Elevador {
         System.out.println("Mais uma pessoa entrou no elevador");
     }
 
-    public boolean sair() {
-        if (emManutencao || pessoasPresentes <= 0) {
-            return false;
+    public void sair() {
+        if (emManutencao || pessoasPresentes <= 0) {      
         }
-        pessoasPresentes--;
+        this.pessoas = pessoasPresentes--;
         System.out.println("Uma pessoa saiu do elevador");
         
     }
 
-    public boolean subir() {
+    public void subir() {
         if (emManutencao || andarAtual >= totalAndares) {
-            return false;
         }
         this.andarAtual = andarAtual++;
-        return true;
     }
 
-    public boolean descer() {
+    public void descer() {
         if (emManutencao || andarAtual <= 0) {
-            return false;
         }
-        andarAtual--;
-        return true;
+        this.andarAtual = andarAtual--;
     }
 
     public void colocarEmManutencao() {
-        emManutencao = true;
+        this.emManutencao = true;
     }
 
     public void liberarManutencao() {
-        emManutencao = false;
+        this.emManutencao = false;
     }
 
     public int getAndarAtual() {
