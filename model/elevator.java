@@ -1,4 +1,4 @@
-package model;
+package elevador;
 
 public class Elevador {
     private int andarAtual = 0;
@@ -18,27 +18,37 @@ public class Elevador {
         this.emManutencao = false;
     }
 
-    public boolean entrar() {
+    public void entrar() {
         if (emManutencao || pessoasPresentes >= capacidade) {
-            return false;
+            System.out.println("Limite de pessoas excedido ou elevador está em Manutenção!");
+            return;
         }
+        else{
         pessoasPresentes++;
-        System.out.println("Mais uma pessoa entrou no elevador");
+        System.out.println("Mais uma pessoa entrou no elevador");  
+                }
     }
 
     public void sair() {
-        if (emManutencao || pessoasPresentes <= 0) {      
+        if (emManutencao || pessoasPresentes <= 0) { 
+            System.out.println("Elevador está vazio ou está em Manutenção");
+            return;
         }
-        this.pessoas = pessoasPresentes--;
+        else{
+        this.pessoasPresentes = pessoasPresentes--;
         System.out.println("Uma pessoa saiu do elevador");
-        
+        }
     }
 
     public void subir() {
         if (emManutencao || andarAtual >= totalAndares) {
+            System.out.println("Elevador está no ultimo andar ou está em manutenção");
         }
+        else{
+            System.out.println("Elevador subindo!");
         this.andarAtual = andarAtual++;
-    }
+        }
+        }
 
     public void descer() {
         if (emManutencao || andarAtual <= 0) {
