@@ -5,19 +5,19 @@ import java.util.ArrayList;
 
 public class Predio{
     private String nome;
-    private List<Elevador> elevadores;
+    private List<Elevator> elevadores;
 
     public Predio(String nome) {
         this.nome = nome;
         this.elevadores = new ArrayList<>();
     }
-    public void adicionarElevador(Elevador elevador){
+    public void adicionarElevador(Elevator elevador){
         if(elevador == null){
             throw new NullPointerException("Erro ao adicionar elevador");
         }
         elevadores.add(elevador);
     }
-    public Elevador getElevador(int indice){
+    public Elevator getElevador(int indice){
         if(indice<0 || indice>=elevadores.size()){
             throw new IndexOutOfBoundsException("Indice inválido");
         }

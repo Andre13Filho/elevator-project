@@ -1,8 +1,6 @@
-package service;
-
 import model.Elevator;
 
-public class ElevatorService {
+public class elevatorService {
 
 	public void moverElevador(Elevator elevador, int destino) {
 		if (elevador == null)
